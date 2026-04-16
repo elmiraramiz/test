@@ -2,6 +2,10 @@ from fastapi import FastAPI
 import uvicorn
 import threading
 import time
+from turtle import Screen
+from food import Food
+from scoreboard import Scoreboard
+from snake import Snake #snake=file name , Snake= class name
 
 # ۱. ساخت شیء API (این چیزی است که رندر به آن نیاز دارد)
 app = FastAPI()
@@ -17,6 +21,32 @@ def read_root():
 def your_original_main():
     print("کد اصلی شما شروع شد...")
     while True:
+        screen = Screen()
+        screen.setup(600, 600)
+        screen.bgcolor("black")
+        screen.title("Snake")
+        screen.tracer(0)
+
+        snake = Snake()  # snake=object
+        food = Food()
+        scoreboard = Scoreboard()
+
+        screen.listen()
+        screen.onkey(snake.up, "Up")
+        screen.onkey(snake.down, "Down")
+        screen.onkey(snake.right, "Right")
+        screen.onkey(snake.left, "Left")
+
+        game_is_on = True
+        while game_is_on:
+            screen.update()
+            snake.move()
+            time.sleep(0.1)
+            if snake.segments[0].distance(food) < 20:
+                food.refresh()
+                scoreboard.add()
+        screen.exitonclick()
+
         # اینجا هر کاری که برنامه اصلی‌تان انجام می‌داد را قرار دهید
         # مثلاً: چاپ یک متن، پردازش داده، یا مدیریت ربات
         print("بخش Main در حال فعالیت است...")
@@ -31,33 +61,5 @@ if __name__ == "__main__":
     # اجرای وب‌سرور برای پاسخگویی به رندر
     uvicorn.run(app, host="0.0.0.0", port=10000)
 
-from turtle import Screen
-from food import Food
-from scoreboard import Scoreboard
-from snake import Snake #snake=file name , Snake= class name
 
-screen = Screen()
-screen.setup(600,600)
-screen.bgcolor("black")
-screen.title("Snake")
-screen.tracer(0)
 
-snake = Snake()   #snake=object
-food = Food()
-scoreboard = Scoreboard()
-
-screen.listen()
-screen.onkey(snake.up,"Up")
-screen.onkey(snake.down,"Down")
-screen.onkey(snake.right,"Right")
-screen.onkey(snake.left,"Left")
-
-game_is_on = True
-while game_is_on:
-    screen.update()
-    snake.move()
-    time.sleep(0.1)
-    if snake.segments[0].distance(food) < 20:
-        food.refresh()
-        scoreboard.add()
-screen.exitonclick()
